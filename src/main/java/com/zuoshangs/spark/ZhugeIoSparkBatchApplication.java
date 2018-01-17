@@ -27,7 +27,7 @@ public final class ZhugeIoSparkBatchApplication {
 	public static void main(String[] args) throws Exception {
 		if(args.length<2){
 			System.err.println("Usage: ZhugeIoSparkBatchApplication <eventFileName> <userAttrFileName> ");
-			System.err.println("./bin/spark-submit --master spark://10.40.3.236:7077 --class com.xs.micro.data.spark.ZhugeIoSparkBatchApplication /root/code/sparkApp/target/spark-app-1.0-SNAPSHOT.jar hdfs://10.40.3.236:9000/zhugeio/b_user_event_all_47271_000 hdfs://10.40.3.236:9000/zhugeio/b_user_property_47271_000");
+			System.err.println("./bin/spark-submit --master spark://10.40.3.236:7077 --class com.zuoshangs.spark.ZhugeIoSparkBatchApplication /root/code/sparkApp/target/spark-app-1.0-SNAPSHOT-jar-with-dependencies.jar hdfs://10.40.3.236:9000/zhugeio/b_user_event_all_47271_000 hdfs://10.40.3.236:9000/zhugeio/b_user_property_47271_000");
 			System.exit(1);
 		}
 		String eventFile = args[0];
