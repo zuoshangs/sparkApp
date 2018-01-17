@@ -58,12 +58,12 @@ public final class ZhugeIoSparkBatchApplication {
 				userEvent.setDeviceId(arr[1]);
 				String outerUserId = arr[2];
 				userEvent.setEventName(arr[4]);
-				userEvent.setEventId(args[5]);
+				userEvent.setEventId(arr[5]);
 				userEvent.setOuterUserId(outerUserId);
-				userEvent.setEventTime(args[7]);
-				userEvent.setEventDay(args[8]);
+				userEvent.setEventTime(arr[7]);
+				userEvent.setEventDay(arr[8]);
 				//第2个是用户id
-				return new Tuple2<>(outerUserId, String.join("\t",arr[1],arr[2],arr[4],args[5],args[7],args[8]));
+				return new Tuple2<>(outerUserId, String.join("\t",arr[1],arr[2],arr[4],arr[5],arr[7],arr[8]));
 			}
 		});
 		System.out.println("userAttr begin---------------------------------------");
