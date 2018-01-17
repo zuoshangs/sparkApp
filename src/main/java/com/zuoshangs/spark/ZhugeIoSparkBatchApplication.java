@@ -1,11 +1,12 @@
 package com.zuoshangs.spark;
 
 
+import com.zuoshangs.spark.domain.model.User;
+import com.zuoshangs.spark.domain.model.UserEvent;
 import com.zuoshangs.spark.extension.util.AESUtil;
-import com.zuoshangs.spark.extension.util.AESUtil.AESFailedException;
-import java.io.PrintStream;
+
 import java.util.Iterator;
-import java.util.List;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -21,7 +22,7 @@ import scala.Tuple2;
  * Time: 19:26
  */
 public final class ZhugeIoSparkBatchApplication {
-	private static final String SPACE = "\\t";
+	private static final String TAB = "\\t";
 	private static final String APP_USER_ID_COLUMN = "app_user_id";
 
 	public static void main(String[] args) throws Exception {
@@ -40,7 +41,7 @@ public final class ZhugeIoSparkBatchApplication {
 		JavaRDD<String> eventListAfterFilter = eventList.filter(new Function<String, Boolean>() {
 			@Override
 			public Boolean call(String s) throws Exception {
-				String[] column = s.split(SPACE);
+				String[] column = s.split(TAB);
 				//第2个是用户id
 				if("138291".equals(column[2])){
 					return true;
@@ -52,15 +53,24 @@ public final class ZhugeIoSparkBatchApplication {
 		JavaPairRDD<String, String> eventRdd = eventListAfterFilter.mapToPair(new PairFunction<String, String, String>() {
 			@Override
 			public Tuple2<String, String> call(String s) {
+				String[] arr = s.split(TAB);
+				UserEvent userEvent = new UserEvent();
+				userEvent.setDeviceId(arr[1]);
+				String outerUserId = arr[2];
+				userEvent.setEventName(arr[4]);
+				userEvent.setEventId(args[5]);
+				userEvent.setOuterUserId(outerUserId);
+				userEvent.setEventTime(args[7]);
+				userEvent.setEventDay(args[8]);
 				//第2个是用户id
-				return new Tuple2<String, String>(s.split(SPACE)[2], s);
+				return new Tuple2<>(outerUserId, String.join("\t",arr[1],arr[2],arr[4],args[5],args[7],args[8]));
 			}
 		});
 		System.out.println("userAttr begin---------------------------------------");
 		JavaRDD<String> userAttrListAfterFilter = userAttrList.filter(new Function<String, Boolean>() {
 			@Override
 			public Boolean call(String s) throws Exception {
-				String[] column = s.split(SPACE);
+				String[] column = s.split(TAB);
 				//第三个是属性名，属性名等于app_user_id表示用户id
 				if(APP_USER_ID_COLUMN.equals(column[3])){
 					return true;
@@ -73,25 +83,21 @@ public final class ZhugeIoSparkBatchApplication {
 			@Override
 			public Tuple2<String, String> call(String s) {
 				//第5个是用户id加密后的值
-				String[] arr = s.split(SPACE);
+				String[] arr = s.split(TAB);
 				String userIdEncode = arr[5];
-				String userId = null;
+				String outerUserId = arr[1];
+				String bizUserId = null;
 				try {
-					userId = AESUtil.decrypt(userIdEncode);
-					arr[5] = userId;
+					bizUserId = AESUtil.decrypt(userIdEncode);
 					//TODO 这里需要处理
 				} catch (AESUtil.AESFailedException e) {
 					e.printStackTrace();
 				}
-				return new Tuple2<String, String>(arr[1], s);
+				//第1个是诸葛IO的userId
+				return new Tuple2<>(outerUserId, String.join("\t",outerUserId,userIdEncode,bizUserId));
 			}
 		});
-		System.out.println(" ****************** join *******************");
 
-		JavaPairRDD<String, Tuple2<String, String>> joinRDD = eventRdd.join(userAttrRdd);
-		for (Tuple2<String, Tuple2<String, String>> stringTuple2Tuple2 : joinRDD.collect()) {
-			System.out.println("55555555555555555555555:"+stringTuple2Tuple2._1()+","+stringTuple2Tuple2._2()._1()+":"+stringTuple2Tuple2._2()._2());
-		}
 		 /*
         *   leftOuterJoin
         * */
