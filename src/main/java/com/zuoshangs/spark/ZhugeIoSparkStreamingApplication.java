@@ -33,7 +33,7 @@ public class ZhugeIoSparkStreamingApplication {
 //			group = "toHbase1";
             //10.40.3.236:9092,10.40.3.238:9092,10.40.3.239:9092 accesslog toHbase1
             System.err.println("Usage: JavaKafkaWordCount <zkQuorum> <group> <topics>");
-            System.err.println("./bin/spark-submit --master spark://10.40.3.236:7077 --class ZhugeIoSparkStreamingHandler /root/dev/spark-2.2.0-bin-hadoop2.7/jars/14.jar 10.40.3.236:9092,10.40.3.238:9092,10.40.3.239:9092 accesslog toHbase1");
+            System.err.println("./bin/spark-submit --master spark://10.40.3.236:7077 --class com.xs.micro.data.spark.ZhugeIoSparkStreamingApplication /root/code/sparkApp/target/spark-app-1.0-SNAPSHOT.jar 10.40.3.236:9092,10.40.3.238:9092,10.40.3.239:9092 accesslog toHbase1");
             System.exit(1);
         }
         brokers = args[0];

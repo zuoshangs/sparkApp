@@ -47,7 +47,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.xs.micro.data.spark.ZhugeIoSparkBatchApplication</mainClass>
+                            <mainClass>com.zuoshangs.spark.ZhugeIoSparkBatchApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
