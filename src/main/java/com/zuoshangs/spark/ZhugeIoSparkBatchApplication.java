@@ -54,14 +54,15 @@ public final class ZhugeIoSparkBatchApplication {
 			@Override
 			public Tuple2<String, String> call(String s) {
 				String[] arr = s.split(TAB);
-				UserEvent userEvent = new UserEvent();
-				userEvent.setDeviceId(arr[1]);
 				String outerUserId = arr[2];
-				userEvent.setEventName(arr[4]);
-				userEvent.setEventId(arr[5]);
-				userEvent.setOuterUserId(outerUserId);
-				userEvent.setEventTime(arr[7]);
-				userEvent.setEventDay(arr[8]);
+				/**
+				 * 1:deviceId
+				 * 2:用户id
+				 * 4：eventName
+				 * 5：eventId
+				 * 7：时间
+				 * 8：day
+				 */
 				//第2个是用户id
 				return new Tuple2<>(outerUserId, String.join("\t",arr[1],arr[2],arr[4],arr[5],arr[7],arr[8]));
 			}
@@ -106,7 +107,17 @@ public final class ZhugeIoSparkBatchApplication {
 		Iterator<Tuple2<String, Tuple2<String, Optional<String>>>> it2 = leftOuterJoinRdd.collect().iterator();
 		while (it2.hasNext()) {
 			Tuple2<String, Tuple2<String, Optional<String>>> item = it2.next();
-			System.out.println("key:" + item._1 + ", v1:" + item._2._1 + ", v2:" + item._2._2 );
+			String[] arr = item._2._1.split(TAB);
+			UserEvent userEvent = new UserEvent();
+			userEvent.setDeviceId(arr[0]);
+			userEvent.setOuterUserId(arr[1]);
+			userEvent.setEventName(arr[2]);
+			userEvent.setEventId(arr[3]);
+			userEvent.setEventTime(arr[4]);
+			userEvent.setEventDay(arr[5]);
+			String bizUserId = item._2._2.get().split(TAB)[2];
+			userEvent.setBizUserId(bizUserId);
+			System.out.println("userEvent:" + userEvent );
 		}
 		ctx.stop();
 	}

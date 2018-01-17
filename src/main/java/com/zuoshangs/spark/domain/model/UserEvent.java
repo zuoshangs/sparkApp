@@ -105,5 +105,22 @@ public class UserEvent {
     public void setEventDay(String eventDay) {
         this.eventDay = eventDay;
     }
+
+    @Override
+    public String toString() {
+        return "UserEvent{" +
+                "deviceId='" + deviceId + '\'' +
+                ", eventId='" + eventId + '\'' +
+                ", eventName='" + eventName + '\'' +
+                ", eventTarget='" + eventTarget + '\'' +
+                ", eventPage='" + eventPage + '\'' +
+                ", eventParam='" + eventParam + '\'' +
+                ", frameworkSource='" + frameworkSource + '\'' +
+                ", bizUserId='" + bizUserId + '\'' +
+                ", outerUserId='" + outerUserId + '\'' +
+                ", eventTime='" + eventTime + '\'' +
+                ", eventDay='" + eventDay + '\'' +
+                '}';
+    }
 }
 
