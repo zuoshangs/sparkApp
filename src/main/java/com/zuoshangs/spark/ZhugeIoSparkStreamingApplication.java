@@ -24,6 +24,7 @@ import scala.Tuple2;
 
 public class ZhugeIoSparkStreamingApplication {
     public static void main(String[] args) throws InterruptedException {
+
         String brokers;
         String topics;
         String group;
