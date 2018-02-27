@@ -27,21 +27,34 @@ public final class ZhugeIoSparkBatchApplication {
 	private static final int PAGE_NO = 1000;
 
 	public static void main(String[] args) throws Exception {
-		if(args.length<4){
-			System.err.println("Usage: ZhugeIoSparkBatchApplication <eventFileName> <userAttrFileName> <brokers> <topic> ");
+		if(args.length<5){
+			System.err.println("Usage: ZhugeIoSparkBatchApplication <eventFileName> <eventAttrFileName> <userAttrFileName> <brokers> <topic> ");
 			System.err.println("./bin/spark-submit --master spark://10.40.3.236:7077 --class com.zuoshangs.spark.ZhugeIoSparkBatchApplication /root/code/sparkApp/target/spark-app-1.0-SNAPSHOT-jar-with-dependencies.jar hdfs://10.40.3.236:9000/zhugeio/b_user_event_all_47271_000 hdfs://10.40.3.236:9000/zhugeio/b_user_property_47271_000 10.40.3.236:9092,10.40.3.238:9092,10.40.3.239:9092 COLLECT_BATCH");
 			System.exit(1);
 		}
 		String eventFile = args[0];
-		String userAttrFile = args[1];
-		String brokers = args[2];
-		String topics = args[3];
+		String eventAttrFile = args[1];
+		String userAttrFile = args[2];
+		String brokers = args[3];
+		String topics = args[4];
 		SparkConf sparkConf = new SparkConf().setAppName("ZhugeIoSparkBatchApplication");
 		JavaSparkContext ctx = new JavaSparkContext(sparkConf);
 		JavaRDD<String> eventList = ctx.textFile(eventFile, 1);
+		JavaRDD<String> eventAttrList = ctx.textFile(eventAttrFile, 1);
 		JavaRDD<String> userAttrList = ctx.textFile(userAttrFile, 1);
 
 		JavaRDD<String> eventListAfterFilter = eventList.filter(new Function<String, Boolean>() {
+			@Override
+			public Boolean call(String s) throws Exception {
+				String[] column = s.split(TAB);
+				//第2个是用户id
+				if("138291".equals(column[2])){
+					return true;
+				}
+				return false;
+			}
+		});
+		eventAttrList.filter(new Function<String, Boolean>() {
 			@Override
 			public Boolean call(String s) throws Exception {
 				String[] column = s.split(TAB);
@@ -93,7 +106,6 @@ public final class ZhugeIoSparkBatchApplication {
 				String bizUserId = null;
 				try {
 					bizUserId = AESUtil.decrypt(userIdEncode);
-					//TODO 这里需要处理
 				} catch (AESUtil.AESFailedException e) {
 					e.printStackTrace();
 				}

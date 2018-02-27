@@ -50,7 +50,7 @@ public class MyKafkaProducer {
                 sendMap.put("pageNo", pageNo);
                 String json = JSON.toJSONString(sendMap);
                 send(broker,topicName, json);
-                System.out.println("collect send kafka topicName:[{"+topicName+"}], businessType:[{"+businessType+"}], data.size:[{CollectionUtils.size("+list+")}]");
+                System.out.println("spark send kafka topicName:[{"+topicName+"}], businessType:[{"+businessType+"}], data.size:[{CollectionUtils.size("+list+")}]");
             }
         }
     }
