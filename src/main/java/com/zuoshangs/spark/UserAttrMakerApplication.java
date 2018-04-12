@@ -34,6 +34,7 @@ public class UserAttrMakerApplication {
         String pattern = "yyyyMMddHHmmss";
         Date startTime = DateUtils.parseDate(args[0],pattern);
         Date endTime = DateUtils.parseDate(args[1],pattern);
+        System.out.println("start:"+startTime+",end:"+endTime);
 
         SparkConf sparkConf = new SparkConf().setAppName("UserAttrMakerApplication");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
@@ -53,6 +54,7 @@ public class UserAttrMakerApplication {
 
         String startRow = HbaseUtil.queryStartRowByDate(startTime);
         String stopRow = HbaseUtil.queryEndRowByDate(endTime);
+        System.out.println("-------------------------startRow:"+startRow+",stopRow:"+stopRow);
 
         Scan scan = new Scan(Bytes.toBytes(startRow), Bytes.toBytes(stopRow));
 
